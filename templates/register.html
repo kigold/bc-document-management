@@ -28,13 +28,15 @@
   <div class="form">
   <!-- Registration Form-->
     <h2>Create an account</h2>
-    <form method="post">
-      <input type="text" placeholder="Username" name="create_username"/>
-      <input type="password" placeholder="Password" name="create_password" />
+    <form action="/register" method="post">
+
+      <input type="text" placeholder="Username" name="username"/>
+      <input type="text" placeholder="Firstname" name="f_name"/>
+      <input type="text" placeholder="Surname" name="s_name"/>
+      <input type="password" placeholder="Password" name="password" />
       <input type="email" placeholder="Email Address" name="email" />
-      <input type="tel" placeholder="Phone Number" name="phone" />
       <input type="text" placeholder="Position" name="position" />
-      <input type="text" placeholder="Department" name="dapartment" />
+      <input type="text" placeholder="Department" name="dept" />
       <button>Register</button>
     </form>
   </div>

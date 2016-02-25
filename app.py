@@ -1,7 +1,58 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from functools import wraps
+from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
+
+
+############Database
+engine = create_engine('postgresql://kigold:blessed@localhost/andela')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:blessed@localhost/andela'
+db = SQLAlchemy(app)
+
+'''Create Database model'''
+class User(db.Model):
+	__tablename__ = 'users'
+	id = db.Column(db.Integer, primary_key=True)
+	f_name = db.Column(db.String(120))
+	s_name = db.Column(db.String(120))
+	username = db.Column(db.String(120), unique=True)
+	email = db.Column(db.String(120), unique=True)
+	password = db.Column(db.String(120))
+	position = db.Column(db.String(120))
+	dept = db.Column(db.String(120))
+
+
+	def __init__(self, username):
+		self.username = username
+
+
+class Documents(db.Model):
+	__tablename__ = 'documents'
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(120))
+	link = db.Column(db.String(300))
+	keyword = db.Column(db.String(300))
+	dept = db.Column(db.String(120))
+
+
+	def __init__(self, title):
+		self.title = title
+
+####
+
+
+
+
+
+
+
+
+
+
+
 
 app.secret_key = "mykeyoogetit"
 # login required decorator
@@ -29,6 +80,7 @@ def login():
 		if request.form['username'] == 'admin' and request.form['password'] == 'admin':
 			username = request.form['username']
 			session['logged_in'] = True
+			session['username'] = request.form['username']
 			#flash('You have succesfuly loged in')
 			return render_template('index.html')
 		else:
@@ -54,14 +106,32 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def reg():
 	error = None
+	if 'username' in session:
+		redirect(url_for('home'))
+
 	if request.method == 'POST':
 		try:
 			username = request.form['username']
+			f_name = request.form['f_name']
+			s_name = request.form['s_name']
+			password = request.form['password']
+			email = request.form['email']
+			position = request.form['position']
+			dept = request.form['dept']
+
+			'''check is email doesnt already exist'''
+			if not db.session.query(User).filter(User.email == email).count():
+				client = User(username=username, f_name=f_name, s_name=s_name, password=password, email=email, position=position, dept=dept)
+				db.session.add(client)
+				db.session.commit()
+				#return render_template('user.html', name=username)
+				return render_template('index.html')
+
+
 			return render_template('user/' + str(username))
 		except "Server Error" as e:
 			error = str(e)
 	return render_template('register.html')
-
 
 
 
