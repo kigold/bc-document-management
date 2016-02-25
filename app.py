@@ -1,9 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from functools import wraps
 
 app = Flask(__name__)
 
 app.secret_key = "mykeyoogetit"
+# login required decorator
+def login_required(f):
+	@wraps(f)
+	def wrap(*args, **kwargs):
+		if 'logged_in' in session:
+			return f(*args, **kwargs)
+		else:
+			return redirect(url_for('login'))
+	return wrap
+
+
+#login required decorator
+
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
@@ -14,7 +29,7 @@ def login():
 		if request.form['username'] == 'admin' and request.form['password'] == 'admin':
 			username = request.form['username']
 			session['logged_in'] = True
-			flash('You have succesfuly loged in')
+			#flash('You have succesfuly loged in')
 			return render_template('index.html')
 		else:
 			if request.form['username'] != 'admin' or request.form['password'] != 'admin':
@@ -22,14 +37,16 @@ def login():
 				return render_template('login.html', error=error)		
 	return render_template('login.html')
 
-@app.route('/logout')
+@app.route('/logout') 
+@login_required
 def logout():
 	session.pop('logged_in', None)
-	flash('You have logged out')
+	#flash('You have logged out')
 	return redirect(url_for('home'))
 
   
 @app.route('/home')
+@login_required
 def home():
     return render_template('index.html') 
 
