@@ -1,17 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, g
 from functools import wraps
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.migrate import Migrate, MigrateCommand
 from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
 
 ############Database
-#engine = create_engine('postgresql://postgres:blessed@localhost/postgres')
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:blessed@localhost/postgres'
 db = SQLAlchemy(app)
-db.create_all()
+
+migrate = Migrate(app, db)
+#manager.add_command('db', MigrateCommand)
+
+#db.create_all()
 
 '''Create Database model'''
 class User(db.Model):
@@ -35,6 +40,9 @@ class User(db.Model):
 		self.position = position
 		self.dept = dept
 
+	def __repr__(self):
+		return	'<username [{},{}]'.format(self.username, self.password)
+
 
 
 
@@ -42,25 +50,17 @@ class User(db.Model):
 class Documents(db.Model):
 	__tablename__ = 'documents'
 	id = db.Column(db.Integer, primary_key=True)
-	title = db.Column(db.String(120))
-	link = db.Column(db.String(300))
-	keyword = db.Column(db.String(300))
-	dept = db.Column(db.String(120))
+	title = db.Column(db.String(120), nullable=True)
+	author = db.Column(db.String(120), nullable=True)
+	link = db.Column(db.String(300), nullable=True)
+	keyword = db.Column(db.String(300), nullable=True)
+	dept = db.Column(db.String(120), nullable=True)
 
 
 	def __init__(self, title):
-		self.title = title
+		return '<title [{}, {}]'.format(self.title, self.id)
 
 ####
-
-
-
-
-
-
-
-
-
 
 
 
@@ -78,6 +78,20 @@ def login_required(f):
 
 #login required decorator
 
+
+@app.route('/docs', )
+@login_required
+def docs():
+	'''try:
+		title = request.form['title']
+		author = request.form['author']
+		link = request.form['link']
+		keyword = request.form['keyword']
+		contributor = request.form['contributor']
+	except "Server Error" as e:
+			error = str(e)'''
+	return render_template('documents.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -87,8 +101,10 @@ def index():
 def login():
 	error = None
 	if request.method == 'POST':
-		if request.form['username'] == 'admin' and request.form['password'] == 'admin':
-			username = request.form['username']
+		username = request.form['username']
+		password = request.form['password']
+		user = User.query.filter_by(username=username).first()
+		if str(user.password) == password:
 			session['logged_in'] = True
 			session['username'] = request.form['username']
 			#flash('You have succesfuly loged in')
@@ -115,25 +131,30 @@ def home():
 
 @app.route('/register', methods=['GET', 'POST'])
 def reg():
-	error = None
-	if 'username' in session:
-		redirect(url_for('home'))
-
+	
 	if request.method == 'POST':
 		try:
 			username = request.form['username']
 			f_name = request.form['f_name']
 			s_name = request.form['s_name']
-			password = request.form['password']
 			email = request.form['email']
+			password = request.form['password']
 			position = request.form['position']
 			dept = request.form['dept']
 
 			'''check is email doesnt already exist'''
-			if not db.session.query(User).filter(User.email == email).count():
+
+			if not db.session.query(User).filter(User.email==
+				email).count() and db.session.query(User).filter(User.password == password).count():
 				client = User(username, f_name, s_name, password, email, position, dept)
 				db.session.add(client)
 				db.session.commit()
+
+				'''set session anduser name '''
+
+				session['logged_in'] = True
+				session['username'] = request.form['username']
+
 				#return render_template('user.html', name=username)
 				return render_template('index.html')
 

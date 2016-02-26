@@ -1,0 +1,66 @@
+{% extends 'template.html' %}
+{% block content %}
+<div class="container">
+  <h2>Contextual Classes</h2>         
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Id Number</th>
+        <th>Title</th>
+        <th>Authuor</th>
+        <th>Link</th>
+        <th>Contributor</th>
+        <th>Department</th>
+        <th>Keyword</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="success">
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>john@example.com</td>
+      </tr>
+      <tr class="danger">
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>john@example.com</td>
+      </tr>
+      <tr class="info">
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>john@example.com</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="container">
+  <div class="Form">
+ <form action="/document" method="post">
+
+      <input type="text" placeholder="title" name="title"/>
+      <input type="text" placeholder="author" name="author"/>
+      <input type="text" placeholder="link" name="link"/>
+      <input type="password" placeholder="keyword" name="keyword"/>
+      <input type="email" placeholder="contributor" name="contributor"/>
+      <input type="text" placeholder="Department" name="dept" />
+      <button>Register</button>
+    </form>
+    </div>
+</div>
+
+<script src="{{url_for('static', filename='tsorter.js')}}" type="text/javascript"></script>
+
+{% endblock %}
