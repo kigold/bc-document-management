@@ -7,10 +7,11 @@ app = Flask(__name__)
 
 
 ############Database
-engine = create_engine('postgresql://kigold:blessed@localhost/andela')
+#engine = create_engine('postgresql://postgres:blessed@localhost/postgres')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:blessed@localhost/andela'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:blessed@localhost/postgres'
 db = SQLAlchemy(app)
+db.create_all()
 
 '''Create Database model'''
 class User(db.Model):
@@ -25,8 +26,17 @@ class User(db.Model):
 	dept = db.Column(db.String(120))
 
 
-	def __init__(self, username):
+	def __init__(self, username,f_name,s_name,email,password,position,dept):
 		self.username = username
+		self.f_name = f_name
+		self.s_name = s_name
+		self.email = email
+		self.password = password
+		self.position = position
+		self.dept = dept
+
+
+
 
 
 class Documents(db.Model):
@@ -121,7 +131,7 @@ def reg():
 
 			'''check is email doesnt already exist'''
 			if not db.session.query(User).filter(User.email == email).count():
-				client = User(username=username, f_name=f_name, s_name=s_name, password=password, email=email, position=position, dept=dept)
+				client = User(username, f_name, s_name, password, email, position, dept)
 				db.session.add(client)
 				db.session.commit()
 				#return render_template('user.html', name=username)
