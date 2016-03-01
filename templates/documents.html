@@ -1,9 +1,9 @@
 {% extends 'template.html' %}
 {% block content %}
 <div class="container">
-  <h2>Contextual Classes</h2>         
-  <table class="table">
-    <thead>
+  <h2>Documents</h2>         
+  <table id="myTable" class="table  table-hover tablesorter" title="Click on the head to sort the table accordingly">
+    <thead class="thead-inverse">
       <tr>
         <th>Id Number</th>
         <th>Title</th>
@@ -15,48 +15,34 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="success">
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td>john@example.com</td>
-      </tr>
-      <tr class="danger">
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td>john@example.com</td>
-      </tr>
-      <tr class="info">
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td>john@example.com</td>
-      </tr>
+      
+      {% for doc in docs %}
+          <tr class='{{color[loop.index0%3]}}'>
+            <td>{{doc.id}}</td>
+            <td>{{doc.title}}</td>
+            <td>{{doc.author}}</td>
+            <td>{{doc.link}}</td>
+            <td>{{doc.contributor}}</td>
+            <td>{{doc.dept}}</td>
+            <td>{{doc.keyword}}</td>
+          </tr>
+        {% endfor %}
+      
+      
     </tbody>
   </table>
 </div>
 
 <div class="container">
   <div class="Form">
- <form action="/document" method="post">
+ <form action="/docs" method="post">
 
-      <input type="text" placeholder="title" name="title"/>
-      <input type="text" placeholder="author" name="author"/>
+      <input type="text" placeholder="title" name="title" required />
       <input type="text" placeholder="link" name="link"/>
-      <input type="password" placeholder="keyword" name="keyword"/>
-      <input type="email" placeholder="contributor" name="contributor"/>
+      <input type="text" placeholder="keyword" name="keyword"/>
+      <input type="text" placeholder="contributor" name="contributor"/>
       <input type="text" placeholder="Department" name="dept" />
-      <button>Register</button>
+      <button>Create Entry</button>
     </form>
     </div>
 </div>

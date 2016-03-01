@@ -25,12 +25,19 @@
   <!-- Login in Form -->
     <h2>Login to your account</h2>
     <form method="post" action="/login">
-      <input type="text" placeholder="Username" name="username"/>
-      <input type="password" placeholder="Password" name="password" />
+      <input type="text" placeholder="Username" name="username" required/>
+      <input type="password" placeholder="Password" name="password" required />
       <button>Login</button>
       {% if error %}
         <p> Error: {{error}}</p> 
       {% endif %}
+
+          {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
     </form>
   </div>
   <div class="cta"><a href="#">Forgot your password?</a></div>
